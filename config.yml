@@ -1,0 +1,126 @@
+api:
+  host: 0.0.0.0
+  port: 8080
+
+# config.yml
+state:
+  type: redis
+  host: host.docker.internal
+  port: 6379
+
+train:
+  type: redis
+  host: host.docker.internal
+  port: 6379
+
+models:
+  xgboost:
+    type: lambdamart
+    backend:
+      type: xgboost
+      iterations: 50
+      ndcgCutoff: 10
+      seed: 0
+    weights:
+      click: 1
+    features:
+      - click_count
+      - ctr_7_days
+      - popularity   
+      - item_score
+      - bm25l_hs
+      - bm25l
+      - time_on_sales
+      - contributor_average_score
+      - contrib_imasia_sale_per_item
+      - contrib_imasia_sale_rate
+      - contrib_sale_per_item
+      - contrib_sale_rate
+      - item_clicks_last_30_days
+      - item_clicks_last_365_days
+      - item_accesses_last_30_days
+      - item_accesses_last_365_days
+
+features:
+  - name: click_count
+    type: interaction_count
+    interaction: click
+    scope: item
+
+  - name: ctr_7_days
+    type: rate
+    top: click
+    bottom: impression
+    bucket: 24h
+    periods: [7]
+    scope: item
+
+  - name: popularity
+    type: number
+    scope: item
+    source: metadata.item_accesses_last_30_days
+
+  - name: item_score
+    type: number
+    scope: item
+    source: metadata.auto_score
+
+  - name: bm25l_hs
+    type: number
+    scope: item
+    source: metadata.bm25l_hs
+
+  - name: bm25l
+    type: number
+    scope: item
+    source: metadata.bm25l
+
+  - name: time_on_sales
+    type: number
+    scope: item
+    source: metadata.time_on_sales
+
+  - name: contributor_average_score
+    type: number
+    scope: item
+    source: metadata.contrib_avg_auto_score
+
+  - name: contrib_imasia_sale_per_item
+    type: number
+    scope: item
+    source: metadata.contrib_imasia_sale_per_item
+
+  - name: contrib_imasia_sale_rate
+    type: number
+    scope: item
+    source: metadata.contrib_imasia_sale_rate
+
+  - name: contrib_sale_per_item
+    type: number
+    scope: item
+    source: metadata.contrib_sale_per_item
+
+  - name: contrib_sale_rate
+    type: number
+    scope: item
+    source: metadata.contrib_sale_rate
+
+  - name: item_clicks_last_30_days
+    type: number
+    scope: item
+    source: metadata.item_clicks_last_30_days
+
+  - name: item_clicks_last_365_days
+    type: number
+    scope: item
+    source: metadata.item_clicks_last_365_days
+
+  - name: item_accesses_last_30_days
+    type: number
+    scope: item
+    source: metadata.item_accesses_last_30_days
+
+  - name: item_accesses_last_365_days
+    type: number
+    scope: item
+    source: metadata.item_accesses_last_365_days
