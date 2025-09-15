@@ -1,0 +1,31 @@
+services:
+  redis:
+    image: redis:7
+    container_name: metarank-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server","--save","60","1","--appendonly","yes"]
+    volumes:
+      - ./redis-data:/data
+
+  metarank-serve:
+    image: metarank/metarank:latest
+    container_name: metarank-serve
+    working_dir: /work
+    depends_on: [redis]
+    volumes:
+      - ./config.yml:/work/config.yml:ro
+      - ./data:/work/data:ro
+    command: ["serve","--config","/work/config.yml"]
+    ports:
+      - "9090:8080"
+
+  metarank-train:
+    image: metarank/metarank:latest
+    container_name: metarank-train
+    working_dir: /work
+    depends_on: [redis]
+    volumes:
+      - ./config.yml:/work/config.yml:ro
+      - ./data:/work/data:ro
+    command: ["train","--config","/work/config.yml"]

@@ -120,6 +120,7 @@ dmypy.json
 
 # Data files
 data/
+redis-data/
 
 # OS generated files
 .DS_Store
